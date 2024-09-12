@@ -1,8 +1,5 @@
 #pragma once
-
 #include "Hazel/Core.h"
-#include <string>
-#include <functional>
 #include "spdlog/fmt/ostr.h"
 
 

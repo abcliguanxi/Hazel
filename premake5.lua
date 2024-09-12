@@ -9,6 +9,12 @@ workspace "Hazel"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+
+IncludeDir = {}
+IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
+-- 找到GLFW下的premake5文件
+include "Hazel/vendor/GLFW"
+
 project "Hazel"
 	location "Hazel"
 	kind "SharedLib"
@@ -16,6 +22,9 @@ project "Hazel"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	pchheader "hzpch.h"
+	pchsource "Hazel/src/hzpch.cpp"
 
 	files
 	{
@@ -26,18 +35,24 @@ project "Hazel"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	-- 指定windows系统构建方式
 	filter "system:windows"
-		cppdialect "c++17"
+		cppdialect "C++17"
 		staticruntime "On"
-		systemversion "10.0.19041.0"
+		systemversion "latest"
 
 		defines
 		{
-			"HZ_PALTFORM_WINDOWS",
+			"HZ_PLATFORM_WINDOWS",
 			"HZ_BUILD_DLL"
 		}
 
@@ -50,6 +65,7 @@ project "Hazel"
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
 		symbols "On"
+		staticruntime "on"
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"
@@ -88,18 +104,17 @@ project "Sandbox"
 
 	-- 指定windows系统构建方式
 	filter "system:windows"
-		cppdialect "c++17"
-		staticruntime "On"
+		cppdialect "C++17"
 		systemversion "latest"
 
 		defines
 		{
-			"HZ_PALTFORM_WINDOWS"
+			"HZ_PLATFORM_WINDOWS"
 		}
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"

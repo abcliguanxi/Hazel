@@ -1,13 +1,10 @@
 #pragma once
 
-#ifdef HZ_PALTFORM_WINDOWS
+#ifdef HZ_PLATFORM_WINDOWS
 extern Hazel::Application* Hazel::CreateApplication();//在某个地方定义的函数会返回实际的应用程序
 int main(int argc,char** argv) {
 
 	Hazel::Log::Init();
-	HZ_CORE_WARN("Initialized Log!");
-	HZ_INFO("Hello! var={0}",5);
-
 
 	auto app = Hazel::CreateApplication();
 	app->Run();
