@@ -22,12 +22,12 @@ namespace Hazel {
 	//可能想要过滤某些事件 利用移位操作可以让一个事件属于多个category
 	enum EventCategory
 	{
-		None,
-		EventCategoryApplication = BIT(0),
-		EventCategoryInput = BIT(1),
-		EventCategoryKeyboard = BIT(2),
-		EventCategoryMouse = BIT(3),
-		EventCategoryMouseButton = BIT(4),
+		None = 0,
+		EventCategoryApplication    = BIT(0),
+		EventCategoryInput          = BIT(1),
+		EventCategoryKeyboard       = BIT(2),
+		EventCategoryMouse          = BIT(3),
+		EventCategoryMouseButton    = BIT(4)
 	};
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
@@ -37,8 +37,9 @@ namespace Hazel {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	//所有事件的基类
-	class HAZEL_API Event {
+	class HAZEL_API Event
+	{
+		friend class EventDispatcher;//友元类，可以访问当前Event下的protected对象
 	public:
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;

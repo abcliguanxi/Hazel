@@ -2,10 +2,10 @@
 #include "Event.h"
 
 namespace Hazel {
-	class HAZEL_API MouseEvent : public Event
+	class HAZEL_API MouseMoveEvent : public Event
 	{
 	public:
-		MouseEvent(float x ,float y):m_MouseX(x),m_MouseY(y){}
+		MouseMoveEvent(float x ,float y):m_MouseX(x),m_MouseY(y){}
 
 		inline float GetX() const { return m_MouseX; }
 		inline float GetY() const { return m_MouseY; }

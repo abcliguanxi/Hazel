@@ -14,7 +14,7 @@ namespace Hazel {
 		//如果你不想让外面的用户直接构造一个KeyEvent的对象，
 		//希望用户只能构造KeyEvent的子类，那你就可以将KeyEvent的构造函数 / 析构函数声明为protected
 		//而将KeyEvent的子类的构造函数 / 析构函数声明为public
-		KeyEvent(int keycode) : m_KeyCode(m_KeyCode){}
+		KeyEvent(int keycode) : m_KeyCode(keycode){}
 		int m_KeyCode;
 	};
 
@@ -26,7 +26,7 @@ namespace Hazel {
 		inline int GetRepeatCount() const { return m_RepeatCount; }
 		std::string ToString() const override {
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats";
+			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
 		}
 
