@@ -9,21 +9,23 @@ workspace "Hazel"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-
+-- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
 IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
--- 找到GLFW下的premake5文件
+IncludeDir["ImGui"] = "Hazel/vendor/imgui"
+
 include "Hazel/vendor/GLFW"
 include "Hazel/vendor/Glad"
+include "Hazel/vendor/imgui"
 
 project "Hazel"
 	location "Hazel"
 	kind "SharedLib"
 	language "C++"
 
-	targetdir("bin/" .. outputdir .. "/%{prj.name}")
-	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "hzpch.h"
 	pchsource "Hazel/src/hzpch.cpp"
@@ -39,16 +41,18 @@ project "Hazel"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}"
 	}
 
-	links{
+	links 
+	{ 
 		"GLFW",
 		"Glad",
+		"ImGui",
 		"opengl32.lib"
 	}
 
-	-- 指定windows系统构建方式
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
@@ -61,15 +65,13 @@ project "Hazel"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		-- 复制dll
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox" )
+			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
 		}
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
-		-- 如果是静态链接 sandbox和hazel 各自链接了运行库，会有各自的堆，这样spdlog会尝试释放不同堆上分配的内存，导致崩溃
 		buildoptions "/MDd"
 		symbols "On"
 
@@ -77,7 +79,7 @@ project "Hazel"
 		defines "HZ_RELEASE"
 		buildoptions "/MD"
 		optimize "On"
-		
+
 	filter "configurations:Dist"
 		defines "HZ_DIST"
 		buildoptions "/MD"
@@ -88,8 +90,8 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 
-	targetdir("bin/" .. outputdir .. "/%{prj.name}")
-	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{
@@ -103,14 +105,11 @@ project "Sandbox"
 		"Hazel/src"
 	}
 
-	-- Sandbox链接Hazel
 	links
 	{
 		"Hazel"
 	}
 
-
-	-- 指定windows系统构建方式
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
@@ -130,7 +129,7 @@ project "Sandbox"
 		defines "HZ_RELEASE"
 		buildoptions "/MD"
 		optimize "On"
-		
+
 	filter "configurations:Dist"
 		defines "HZ_DIST"
 		buildoptions "/MD"
