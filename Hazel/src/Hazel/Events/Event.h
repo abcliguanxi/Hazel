@@ -39,8 +39,10 @@ namespace Hazel {
 
 	class HAZEL_API Event
 	{
-		friend class EventDispatcher;//友元类，可以访问当前Event下的protected对象
+		//friend class EventDispatcher;//友元类，可以访问当前Event下的protected对象
+		
 	public:
+		bool Handled = false;
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
@@ -50,8 +52,8 @@ namespace Hazel {
 		inline bool IsInCategory(EventCategory category) {
 			return GetCategoryFlags() & category;
 		}
-	protected:
-		bool m_Handled = false;//查看事件是否被处理
+	//protected:
+	//	bool m_Handled = false;//查看事件是否被处理
 	};
 
 	//事件调度器
@@ -71,7 +73,7 @@ namespace Hazel {
 		bool Dispatch(EventFn<T> func) {
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = func(*(T*)&m_Event); //这里的 *(T*)&m_Event 是一个类型转换，将 m_Event 转换为 T 类型的引用
+				m_Event.Handled = func(*(T*)&m_Event); //这里的 *(T*)&m_Event 是一个类型转换，将 m_Event 转换为 T 类型的引用
 				return true;
 			}
 			return false;
