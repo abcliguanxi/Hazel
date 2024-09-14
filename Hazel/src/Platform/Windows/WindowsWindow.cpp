@@ -1,23 +1,23 @@
-
 #include "hzpch.h"
 #include "WindowsWindow.h"
-#include "Hazel/Log.h"
 
-#include "Hazel/Events/KeyEvent.h"
 #include "Hazel/Events/ApplicationEvent.h"
 #include "Hazel/Events/MouseEvent.h"
+#include "Hazel/Events/KeyEvent.h"
 
 #include <glad/glad.h>
 
-namespace Hazel
-{
+namespace Hazel {
+	
 	static bool s_GLFWInitialized = false;
-	static void GLFWErrorCallback(int error, const char* description) {
-		HZ_CORE_ERROR("GLFW Error ({0}: {1})", error, description);
+
+	static void GLFWErrorCallback(int error, const char* description)
+	{
+		HZ_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	//定义Window里面的Create
-	Window* Window::Create(const WindowProps& props) {
+	Window* Window::Create(const WindowProps& props)
+	{
 		return new WindowsWindow(props);
 	}
 
@@ -28,7 +28,6 @@ namespace Hazel
 
 	WindowsWindow::~WindowsWindow()
 	{
-		//在shutdown里面关闭
 		Shutdown();
 	}
 
@@ -38,7 +37,7 @@ namespace Hazel
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		HZ_CORE_INFO("Create window {0} ({1} {2})", props.Title, props.Width, props.Height);
+		HZ_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
 		if (!s_GLFWInitialized)
 		{
@@ -51,7 +50,7 @@ namespace Hazel
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -75,18 +74,6 @@ namespace Hazel
 				data.EventCallback(event);//调用事件处理回调函数
 			});
 
-		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
-			{
-				//回调函数中获取了 WindowData 对象的引用，并更新了窗口的宽度和高度。
-				//创建了一个 WindowResizeEvent 对象，并通过 EventCallback 方法处理这个事件。
-				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);// void*指针强制转换为 WindowData 类型的指针，并解引用它，获取到 WindowData 对象的引用
-				data.Width = width;
-				data.Height = height;
-
-				//并触发窗口大小改变事件。事件会被进一步处理，例如通知事件监听器。
-				WindowResizeEvent event(width, height);
-				data.EventCallback(event);//调用事件处理回调函数
-			});
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 			{
@@ -120,10 +107,8 @@ namespace Hazel
 					data.EventCallback(event);
 					break;
 				}
-				default:
-					break;
-				}
-			});
+			}
+		});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
@@ -148,6 +133,13 @@ namespace Hazel
 			});
 
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent event(keycode);
+				data.EventCallback(event);
+			});
+
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xoffset, double yoffset) 
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -159,13 +151,16 @@ namespace Hazel
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				MouseMoveEvent event((float)xPos, (float)yPos);
+				MouseMovedEvent event((float)xPos, (float)yPos);
 				data.EventCallback(event);
 			});
 
 	}
 
-
+	void WindowsWindow::Shutdown()
+	{
+		glfwDestroyWindow(m_Window);
+	}
 
 	void WindowsWindow::OnUpdate()
 	{
@@ -186,11 +181,6 @@ namespace Hazel
 	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;
-	}
-
-	void WindowsWindow::Shutdown()
-	{
-		glfwDestroyWindow(m_Window);
 	}
 
 }

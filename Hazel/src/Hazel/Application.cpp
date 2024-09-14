@@ -40,6 +40,7 @@ namespace Hazel {
 
 	void Application::OnEvent(Event& e) 
 	{
+		//APP将window捕获到的事件传递给layer中进行处理
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 		HZ_CORE_TRACE("OnEvent {0}",e);
