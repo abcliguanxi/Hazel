@@ -39,6 +39,8 @@ namespace Hazel
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		virtual void* GetNativeWindow() const = 0;//使用void*是因为可能是其他的窗口对象(不一定是GLTF的)
+
 		static Window* Create(const WindowProps& props = WindowProps());
 
 	};
