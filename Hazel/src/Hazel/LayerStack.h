@@ -22,7 +22,7 @@ namespace Hazel {
 
 	private:
 		std::vector<Layer*> m_Layers;//需要正向和反向遍历，插入，因此用vector
-		std::vector<Layer*>::iterator m_LayerInsert;
+		unsigned int m_LayerInsertIndex = 0;
 
 	};
 }
