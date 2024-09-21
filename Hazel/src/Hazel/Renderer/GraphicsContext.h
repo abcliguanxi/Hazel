@@ -1,6 +1,7 @@
 #pragma once
-namespace Hazel
-{
+
+namespace Hazel {
+
 	class GraphicsContext
 	{
 	public:

@@ -23,7 +23,7 @@ namespace Hazel
 
 		//成功后想要获取显卡信息
 		
-		HZ_CORE_INFO("OpengGL Info:");
+		HZ_CORE_INFO("OpenGL Info:");
 
 		HZ_CORE_INFO("    Vendor: {0}", (char*)glGetString(GL_VENDOR));
 		HZ_CORE_INFO("    Renderer: {0}", (char*)glGetString(GL_RENDERER));
