@@ -20,6 +20,16 @@ namespace Hazel
 
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		HZ_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+		//成功后想要获取显卡信息
+		
+		HZ_CORE_INFO("OpengGL Info:");
+
+		HZ_CORE_INFO("    Vendor: {0}", (char*)glGetString(GL_VENDOR));
+		HZ_CORE_INFO("    Renderer: {0}", (char*)glGetString(GL_RENDERER));
+		HZ_CORE_INFO("    Version: {0}", (char*)glGetString(GL_VERSION));
+		
+
 	}
 
 	void OpenGLContext::SwapBuffers()

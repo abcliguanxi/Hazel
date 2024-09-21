@@ -31,6 +31,9 @@ namespace Hazel {
 		ImGuiLayer* m_ImGuiLayer; // add m_ImGuiLayer as an actual like explicit layer
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+
+		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+
 	private:
 		static Application* s_Instance;
 	};
