@@ -82,7 +82,8 @@ namespace Hazel {
 		std::vector<BufferElement>::const_iterator begin() const { return m_Elements.begin(); }
 		std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
 	private:
-		void CalculateOffsetsAndStride() {
+		void CalculateOffsetsAndStride()
+		{
 			uint32_t offset = 0;
 			m_Stride = 0;
 			for (auto& element : m_Elements)
@@ -101,11 +102,11 @@ namespace Hazel {
 	class VertexBuffer
 	{
 	public:
-		virtual ~VertexBuffer() {}
-		
-		virtual void Bind() const  = 0;
-		virtual void Unbind() const  = 0;
-		
+		virtual ~VertexBuffer() = default;
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 		
@@ -115,7 +116,7 @@ namespace Hazel {
 	class IndexBuffer
 	{
 	public:
-		virtual ~IndexBuffer() {}
+		virtual ~IndexBuffer() = default;
 
 		virtual void Bind() const  = 0;
 		virtual void Unbind() const  = 0;

@@ -7,7 +7,7 @@ namespace Hazel {
 	{
 	public:
 		Layer(const std::string& name = "Layer");
-		virtual ~Layer();
+		virtual ~Layer() = default;
 
 		//当层推入层堆 成为程序一部分时 被Attached
 		virtual void OnAttach() {}
