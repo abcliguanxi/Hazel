@@ -65,7 +65,7 @@ namespace Hazel {
 		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
-				//回调函数中获取了 WindowData 对象的引用，并更新了窗口的宽度和高度。
+				//回调函数中获取了 WindowData对象m_Data的引用（data就是m_Data的引用是一样的），并更新了窗口的宽度和高度。
 				//创建了一个 WindowResizeEvent 对象，并通过 EventCallback 方法处理这个事件。
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);// void*指针强制转换为 WindowData 类型的指针，并解引用它，获取到 WindowData 对象的引用
 				data.Width = width;
