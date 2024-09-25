@@ -23,6 +23,6 @@ namespace Hazel
 
 		
 	private:
-		static Input* s_Instance;//Input类会有唯一一个实例
+		static Input* s_Instance;//Input 类会有唯一一个实例
 	};
 }

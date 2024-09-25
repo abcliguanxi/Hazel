@@ -5,13 +5,9 @@
 #include "Hazel/Events/Event.h"
 #include "Hazel/Events/ApplicationEvent.h"
 
-#include "Hazel/ImGui/ImGuiLayer.h"
-
-#include "Hazel/Renderer/Shader.h"
-#include "Hazel/Renderer/VertexArray.h"
-#include "Hazel/Renderer/Buffer.h"
-#include "Hazel/Renderer/OrthographicCamera.h"
 #include "Hazel/Core/Timestep.h"
+
+#include "Hazel/ImGui/ImGuiLayer.h"
 
 namespace Hazel {
 	class HAZEL_API Application
@@ -32,7 +28,7 @@ namespace Hazel {
 		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
-
+	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer; // add m_ImGuiLayer as an actual like explicit layer
 		bool m_Running = true;

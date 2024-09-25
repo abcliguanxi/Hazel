@@ -1,6 +1,7 @@
 #include <Hazel.h>
 
 #include "imgui/imgui.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 //extern Hazel::Application* Hazel::CreateApplication();//在某个地方定义的函数会返回实际的应用程序
 //int main(int argc, char** argv) {
@@ -19,7 +20,9 @@ class ExampleLayer : public Hazel::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
+		: Layer("Example"),
+		m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f),
+		m_SquarePosition(0.0f)
 	{
 		// Vertex Array
 		m_VertexArray.reset(Hazel::VertexArray::Create());
@@ -50,10 +53,10 @@ public:
 
 		//2. VB and layout
 		float squareVertices[3 * 4] = {
-			-0.75f, -0.75f, 0.0f,
-			 0.75f, -0.75f, 0.0f,
-			 0.75f,  0.75f, 0.0f,
-			-0.75f,  0.75f, 0.0f
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.5f,  0.5f, 0.0f,
+			-0.5f,  0.5f, 0.0f
 		};
 		std::shared_ptr<Hazel::VertexBuffer> squareVB;
 		squareVB.reset(Hazel::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
@@ -76,6 +79,7 @@ public:
 			layout(location = 1) in vec4 a_Color;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 
 			out vec3 v_Position;
 			out vec4 v_Color;
@@ -84,7 +88,7 @@ public:
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);	
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);	
 			}
 		)";
 
@@ -111,12 +115,13 @@ public:
 			layout(location = 0) in vec3 a_Position;
 			
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 			out vec3 v_Position;
 
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);	
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);	
 			}
 		)";
 
@@ -135,10 +140,8 @@ public:
 		m_BlueShader.reset(new Hazel::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
 	}
 
-	virtual void OnUpdate(Hazel::Timestep ts) override
+	void OnUpdate(Hazel::Timestep ts) override
 	{
-		HZ_TRACE("Delta time: {}s", ts.GetSeconds());
-
 		if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
 			m_CameraPosition.x -= m_CameraMoveSpeed * (float)ts;
 		else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
@@ -165,7 +168,18 @@ public:
 		//3. 提交VA
 		Hazel::Renderer::BeginScene(m_Camera);
 
-		Hazel::Renderer::Submit(m_BlueShader, m_SquareVA);
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		for (int y = 0; y < 20; y++)
+		{
+			for (int x = 0; x < 20; x++)
+			{
+				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
+				Hazel::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+			}
+		}
+
 		Hazel::Renderer::Submit(m_Shader, m_VertexArray);
 
 		Hazel::Renderer::EndScene();
@@ -179,6 +193,7 @@ public:
 	void OnEvent(Hazel::Event& event) override
 	{
 	}
+
 private:
 	std::shared_ptr<Hazel::Shader> m_Shader;
 	std::shared_ptr<Hazel::VertexArray> m_VertexArray;
@@ -206,7 +221,7 @@ public:
 	{
 
 	}
-	
+
 };
 
 Hazel::Application* Hazel::CreateApplication()
