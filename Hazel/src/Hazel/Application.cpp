@@ -4,8 +4,9 @@
 #include "Hazel/Log.h"
 
 #include "Hazel/Renderer/Renderer.h"
-
 #include "Input.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Hazel {
 
@@ -20,6 +21,7 @@ namespace Hazel {
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+		//m_Window->SetVSync(false);
 
 		// Application 一定有ImGuiLayer 后续可以通过配置进行可视化
 		m_ImGuiLayer = new ImGuiLayer();
@@ -52,19 +54,18 @@ namespace Hazel {
 				break;
 			}
 		}
-
 	}
 
 	void Application::Run()
 	{
 		while (m_Running)
 		{
-			/*float time = (float)glfwGetTime();
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;*/
+			float time = (float)glfwGetTime();
+			Timestep timestep(time - m_LastFrameTime);
+			m_LastFrameTime = time;
 
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timestep);
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)

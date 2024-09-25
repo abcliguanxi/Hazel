@@ -11,6 +11,7 @@
 #include "Hazel/Renderer/VertexArray.h"
 #include "Hazel/Renderer/Buffer.h"
 #include "Hazel/Renderer/OrthographicCamera.h"
+#include "Hazel/Core/Timestep.h"
 
 namespace Hazel {
 	class HAZEL_API Application
@@ -36,6 +37,7 @@ namespace Hazel {
 		ImGuiLayer* m_ImGuiLayer; // add m_ImGuiLayer as an actual like explicit layer
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		float m_LastFrameTime = 0.0f;
 	private:
 		static Application* s_Instance;
 	};

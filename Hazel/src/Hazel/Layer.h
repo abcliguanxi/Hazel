@@ -1,6 +1,7 @@
 #pragma once
 #include "Hazel/Core.h"
 #include "Hazel/Events/Event.h"
+#include "Hazel/Core/Timestep.h"
 
 namespace Hazel {
 	class HAZEL_API Layer
@@ -12,7 +13,7 @@ namespace Hazel {
 		//当层推入层堆 成为程序一部分时 被Attached
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 
