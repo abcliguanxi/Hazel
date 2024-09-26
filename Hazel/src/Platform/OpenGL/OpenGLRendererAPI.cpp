@@ -1,10 +1,15 @@
 #include "hzpch.h"
-
-#include <glad/glad.h>
 #include "OpenGLRendererAPI.h"
 
-namespace Hazel
-{
+#include <glad/glad.h>
+
+namespace Hazel {
+
+	void OpenGLRendererAPI::Init()
+	{
+		glEnable(GL_BLEND);//开启混合
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//设置混合函数
+	}
 
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{

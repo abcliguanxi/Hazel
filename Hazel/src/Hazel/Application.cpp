@@ -21,7 +21,8 @@ namespace Hazel {
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
-		//m_Window->SetVSync(false);
+		//m_Window->SetVSync(false);		
+		Renderer::Init();
 
 		// Application 一定有ImGuiLayer 后续可以通过配置进行可视化
 		m_ImGuiLayer = new ImGuiLayer();
