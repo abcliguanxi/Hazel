@@ -10,6 +10,13 @@ namespace Hazel {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	void OrthographicCamera::SetProjection(float left, float right, float bottom, float top) {
+		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
+	
+
 	void OrthographicCamera::RecalculateViewMatrix()
 	{
 		//rotation 单位矩阵沿着(0,0,1)轴旋转 m_Rotation
