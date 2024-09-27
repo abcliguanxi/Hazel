@@ -166,7 +166,7 @@ namespace Hazel {
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();//拉取事件
-		glfwSwapBuffers(m_Window);//交换缓冲区
+		m_Context->SwapBuffers();//交换缓冲区
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

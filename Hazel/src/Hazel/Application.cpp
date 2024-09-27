@@ -6,7 +6,7 @@
 #include "Hazel/Renderer/Renderer.h"
 #include "Input.h"
 
-#include <GLFW/glfw3.h>
+#include <glfw/glfw3.h>
 
 namespace Hazel {
 
@@ -44,6 +44,7 @@ namespace Hazel {
 		//APP将window捕获到的事件传递给layer中进行处理
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
 		//渲染处理正向遍历 后压入的层后进行渲染(覆盖前面的层)
 		//事件处理反向遍历 后压入的层先处理事件 
@@ -65,9 +66,11 @@ namespace Hazel {
 			Timestep timestep(time - m_LastFrameTime);
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(timestep);
-
+			if (!m_Minimized)//除了ImGUI外,其他的Layer在window最小化后不可见
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
 				layer->OnImGuiRender();
@@ -82,5 +85,18 @@ namespace Hazel {
 		m_Running = false;
 		return true;
 	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		return false;
+	}
+
 
 }
