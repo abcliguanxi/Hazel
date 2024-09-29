@@ -5,10 +5,6 @@
 
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
-//#if HZ_PLATFORM_WINDOWS
-//#include "Platform/Direct3D/Direct3DBuffer.h"
-//#endif //HZ_PLATFORM_WINDOWS
-
 namespace Hazel {
 
 	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
