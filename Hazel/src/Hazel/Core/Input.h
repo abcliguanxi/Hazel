@@ -1,10 +1,9 @@
 #pragma once
 #include "Hazel/Core/Core.h"
 
-namespace Hazel
-{
-	//这个类需要为单例
-	class HAZEL_API Input 
+namespace Hazel {
+
+	class HAZEL_API Input
 	{
 	protected:
 		Input() = default;
@@ -28,6 +27,6 @@ namespace Hazel
 
 		
 	private:
-		static Input* s_Instance;//Input 类会有唯一一个实例
+		static Scope<Input> s_Instance;
 	};
 }

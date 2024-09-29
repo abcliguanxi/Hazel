@@ -6,7 +6,7 @@
 
 namespace Hazel {
 
-	Input* Input::s_Instance = new WindowsInput();//通常这里初始化为nullptr 然后在Init函数中初始化,但是由于Input是完全静态的,只有一堆函数 这里可以直接初始化为new WindowsInput()
+	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
 
 	bool WindowsInput::IsKeyPressedImpl(int keycode)
 	{
