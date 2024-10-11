@@ -76,7 +76,7 @@ namespace Hazel {
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		glBindTextureUnit(slot, m_RendererID);//0代表插槽的索引
+		glBindTextureUnit(slot, m_RendererID);//0代表插槽的索引 这一句代码的意义是 glBindTexture() 和 glActiveTexture() 两句代码之和，包含绑定纹理和激活纹理单元
 	}
 }
 

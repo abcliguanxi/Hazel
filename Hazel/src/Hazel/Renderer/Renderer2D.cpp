@@ -42,7 +42,7 @@ namespace Hazel {
 		s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
 
 		s_Data->WhiteTexture = Texture2D::Create(1, 1);
-		uint32_t whiteTextureData = 0xffffffff;
+		uint32_t whiteTextureData = 0xffffffff;//16进制白色数据表示 RGBA ff ff ff ff
 		s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
 		s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
