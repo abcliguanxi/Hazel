@@ -3,8 +3,7 @@
 #include "Hazel/Core/Core.h"
 #include "Hazel/Events/Event.h"
 
-namespace Hazel
-{
+namespace Hazel {
 
 	struct WindowProps
 	{
@@ -41,7 +40,6 @@ namespace Hazel
 
 		virtual void* GetNativeWindow() const = 0;//使用void*是因为可能是其他的窗口对象(不一定是GLTF的)
 
-		static Window* Create(const WindowProps& props = WindowProps());
-
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 }

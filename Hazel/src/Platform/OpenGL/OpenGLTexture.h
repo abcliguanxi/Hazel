@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 
 namespace Hazel {
+
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
@@ -24,7 +25,5 @@ namespace Hazel {
 		uint32_t m_RendererID;
 		GLenum m_InternalFormat, m_DataFormat;
 	};
+
 }
-
-
-

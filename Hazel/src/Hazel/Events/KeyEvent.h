@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Event.h"
+#include "Hazel/Events/Event.h"
 
 namespace Hazel {
-	//按键事件(按下，弹起)有共同的按键码 创建一个KeyEvent基类
-	class  KeyEvent : public Event {
+
+	class KeyEvent : public Event
+	{
 	public:
 		inline int GetKeyCode() const { return m_KeyCode; }
 		
@@ -21,7 +22,8 @@ namespace Hazel {
 	class  KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keycode,int repeatCount): KeyEvent(keycode), m_RepeatCount(repeatCount){}
+		KeyPressedEvent(int keycode, int repeatCount)
+			: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
 		inline int GetRepeatCount() const { return m_RepeatCount; }
 		std::string ToString() const override {
@@ -42,9 +44,11 @@ namespace Hazel {
 	class  KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
+		KeyReleasedEvent(int keycode)
+			: KeyEvent(keycode) {}
 
-		std::string ToString() const override {
+		std::string ToString() const override
+		{
 			std::stringstream ss;
 			ss << "KeyReleasedEvent: " << m_KeyCode;
 			return ss.str();

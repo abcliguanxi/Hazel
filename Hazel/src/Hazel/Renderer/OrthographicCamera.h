@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 
-namespace Hazel
-{
+namespace Hazel {
+
 	class OrthographicCamera
 	{
 	public:
@@ -13,7 +13,7 @@ namespace Hazel
 		const glm::vec3& GetPosition() const { return m_Position; }
 		void SetPosition(const glm::vec3& position) {m_Position = position; RecalculateViewMatrix();}
 
-		const float& GetRotation() const { return m_Rotation; }
+		float GetRotation() const { return m_Rotation; }
 		void SetRotation(const float& rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 
 

@@ -1,8 +1,9 @@
 #include "hzpch.h"
-#include "Renderer2D.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "RenderCommand.h"
+#include "Hazel/Renderer/Renderer2D.h"
+
+#include "Hazel/Renderer/VertexArray.h"
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,6 +20,8 @@ namespace Hazel {
 
 	void Renderer2D::Init()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		s_Data = new Renderer2DStorage();
 		//1. VA
 		s_Data->QuadVertexArray = VertexArray::Create();
@@ -52,17 +55,22 @@ namespace Hazel {
 
 	void Renderer2D::Shutdown()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		delete s_Data;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->Bind();
 		s_Data->TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
 	{
+		HZ_PROFILE_FUNCTION();
 
 	}
 
@@ -74,10 +82,9 @@ namespace Hazel {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
-		//1. 绑定Shader
-		s_Data->TextureShader->Bind();
-		//2. 设置shader中统一变量
-		s_Data->TextureShader->SetFloat4("u_Color", color);		
+		HZ_PROFILE_FUNCTION();
+
+		s_Data->TextureShader->SetFloat4("u_Color", color);
 		s_Data->WhiteTexture->Bind();
 		
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x,size.y,1.0f });
@@ -95,11 +102,10 @@ namespace Hazel {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
 	{
-		//1. 绑定Shader
-		s_Data->TextureShader->Bind();
-		
-		texture->Bind();//绑定texture至slot 0,由于之前已经将u_Texture与slot 0绑定,因此这里相当于设置u_Texture的值
+		HZ_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+		texture->Bind();//绑定texture至slot 0,由于之前已经将u_Texture与slot 0绑定,因此这里相当于设置u_Texture的值
 
 		//2. 设置shader中统一变量
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { size.x,size.y,1.0f });
