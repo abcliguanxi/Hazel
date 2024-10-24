@@ -19,3 +19,5 @@ Hazel/vendor/VulkanSDK
 Hazelnut/assets/cache
 scripts/__pycache__
 /Sandbox/HazelProfile-Runtime.json
+/Sandbox/HazelProfile-Startup.json
+/Sandbox/HazelProfile-Shutdown.json
