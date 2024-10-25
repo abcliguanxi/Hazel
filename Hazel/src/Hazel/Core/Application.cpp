@@ -62,9 +62,9 @@ namespace Hazel {
 
 		//渲染处理正向遍历 后压入的层后进行渲染(覆盖前面的层)
 		//事件处理反向遍历 后压入的层先处理事件 
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
-			(*--it)->OnEvent(e);
+			(*it)->OnEvent(e);
 			if (e.Handled)
 				break;
 		}
