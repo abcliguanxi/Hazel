@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Hazel/Events/Event.h"
+#include "Hazel/Core/Input.h"
 
 namespace Hazel {
 
 	class KeyEvent : public Event
 	{
 	public:
-		inline int GetKeyCode() const { return m_KeyCode; }
+		inline KeyCode GetKeyCode() const { return m_KeyCode; }
 		
 		//键盘事件和输入事件都属于键盘事件
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
@@ -15,18 +16,20 @@ namespace Hazel {
 		//如果你不想让外面的用户直接构造一个KeyEvent的对象，
 		//希望用户只能构造KeyEvent的子类，那你就可以将KeyEvent的构造函数 / 析构函数声明为protected
 		//而将KeyEvent的子类的构造函数 / 析构函数声明为public
-		KeyEvent(int keycode) : m_KeyCode(keycode){}
-		int m_KeyCode;
+		KeyEvent(KeyCode keycode) 
+			: m_KeyCode(keycode){}
+		KeyCode m_KeyCode;
 	};
 
 	class  KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, int repeatCount)
+		KeyPressedEvent(KeyCode keycode, int repeatCount)
 			: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
 		inline int GetRepeatCount() const { return m_RepeatCount; }
-		std::string ToString() const override {
+		std::string ToString() const override 
+		{
 			std::stringstream ss;
 			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
@@ -44,7 +47,7 @@ namespace Hazel {
 	class  KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode)
+		KeyReleasedEvent(KeyCode keycode)
 			: KeyEvent(keycode) {}
 
 		std::string ToString() const override
@@ -60,7 +63,7 @@ namespace Hazel {
 	class  KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int keycode)
+		KeyTypedEvent(KeyCode keycode)
 			: KeyEvent(keycode) {}
 
 		std::string ToString() const override
