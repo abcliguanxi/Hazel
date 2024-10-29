@@ -1,5 +1,5 @@
 #pragma once
-#include "Hazel/Core/Core.h"
+#include "Hazel/Core/Base.h"
 
 #ifdef HZ_PLATFORM_WINDOWS
 extern Hazel::Application* Hazel::CreateApplication();//在某个地方定义的函数会返回实际的应用程序
