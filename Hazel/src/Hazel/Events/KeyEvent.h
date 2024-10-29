@@ -8,9 +8,8 @@ namespace Hazel {
 	class KeyEvent : public Event
 	{
 	public:
-		inline KeyCode GetKeyCode() const { return m_KeyCode; }
-		
-		//键盘事件和输入事件都属于键盘事件
+		KeyCode GetKeyCode() const { return m_KeyCode; }
+
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
 		//如果你不想让外面的用户直接构造一个KeyEvent的对象，
@@ -27,7 +26,7 @@ namespace Hazel {
 		KeyPressedEvent(KeyCode keycode, int repeatCount)
 			: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-		inline int GetRepeatCount() const { return m_RepeatCount; }
+		int GetRepeatCount() const { return m_RepeatCount; }
 		std::string ToString() const override 
 		{
 			std::stringstream ss;

@@ -31,7 +31,7 @@ namespace Hazel {
 		EventCategoryMouseButton    = BIT(4)
 	};
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 								virtual EventType GetEventType() const override { return GetStaticType(); }\
 								virtual const char* GetName() const override { return #type; }
 
@@ -50,7 +50,8 @@ namespace Hazel {
 		virtual std::string ToString() const { return GetName(); }
 
 		// 查询当前事件是否属于给定的类型
-		inline bool IsInCategory(EventCategory category) {
+		bool IsInCategory(EventCategory category) 
+		{
 			return GetCategoryFlags() & category;
 		}
 	//protected:
