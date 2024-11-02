@@ -1,5 +1,6 @@
 #include "hzpch.h"
-#include "OrthographicCamera.h"
+#include "Hazel/Renderer/OrthographicCamera.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Hazel {
@@ -39,8 +40,8 @@ namespace Hazel {
 			5. 确定模型顶点在观测空间中坐标【将模型顶点坐标从世界空间变换到观察空间 该变换是由观察矩阵(View_Matrix)实现】
 				如何获取View_Matrix
 				5.1 设置相机在世界空间中 Position and Rotation 计算得到transform
-				5.2 从坐标系转换角度	transform 将世界空间转到观测空间
-									transform.inverse 将观测空间转到世界空间 此时相机坐标系与世界坐标系重合,相机永远在(0,0,0)点往-Z 方向看
+				5.2 从坐标系转换角度	transform 将世界空间坐标系转到观测空间坐标系
+									transform.inverse 将观测空间坐标系转到世界空间坐标系 此时相机坐标系与世界坐标系重合,相机永远在(0,0,0)点往-Z 方向看
 				5.3 从坐标转换角度   transform.inverse 将模型顶点坐标从世界空间转到观测空间，这就是View_Matrix
 				vertices_view【8个顶点在"观测空间"坐标】 = View_Matrix * Model_Matrix * vertices_local
 			6. 确定模型顶点在裁剪空间中坐标 【将模型顶点坐标从观察空间变换到裁剪空间 该变换是由投影矩阵(Projection_Matrix)实现】
