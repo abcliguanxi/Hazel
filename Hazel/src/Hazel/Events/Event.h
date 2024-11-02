@@ -44,6 +44,8 @@ namespace Hazel {
 		//friend class EventDispatcher;//友元类，可以访问当前Event下的protected对象
 		
 	public:
+		virtual ~Event() = default;
+
 		bool Handled = false;
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
