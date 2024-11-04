@@ -66,7 +66,7 @@ namespace Hazel {
 		dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(Application::OnWindowResize));
 
 		//渲染处理正向遍历 后压入的层后进行渲染(覆盖前面的层)
-		//事件处理反向遍历 后压入的层先处理事件 
+		//事件处理反向遍历 后压入的层先处理事件 ,因此这里取rbegin()
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
 			if (e.Handled) 

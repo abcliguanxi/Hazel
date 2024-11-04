@@ -33,7 +33,8 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 		// Update
-		m_CameraController.OnUpdate(ts);
+		if (m_ViewportFocused)
+			m_CameraController.OnUpdate(ts);
 
 		// Render
 		Hazel::Renderer2D::ResetStats();
@@ -150,6 +151,18 @@ namespace Hazel {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
+
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		HZ_CORE_INFO("focus:{0}", m_ViewportFocused);
+		HZ_CORE_INFO("hover:{0}", m_ViewportHovered);
+		//hover:
+			//子窗口独立于主窗口/悬挂在主窗口上   鼠标在子窗口上 hover= true 鼠标不在子窗口上 hover= false
+		//focus
+			//子窗口悬挂在主窗口上   鼠标在主窗口上任何位置 focus = true
+		//子窗口独立于主窗口/ 
+		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);//viewport 没有focus 或者 没有hover需要阻塞事件,事件在imgui layer就被处理掉
+
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))//viewport 修改时重新设置framebuffer的参数，相当于重新Invalidate,为下次framebuffer做准备
 		{
