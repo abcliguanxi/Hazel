@@ -27,10 +27,6 @@ namespace Hazel {
 
 	class Instrumentor
 	{
-	private:
-		std::mutex m_Mutex;
-		InstrumentationSession* m_CurrentSession;
-		std::ofstream m_OutputStream;
 	public:
 		Instrumentor(const Instrumentor&) = delete;
 		Instrumentor(Instrumentor&&) = delete;
