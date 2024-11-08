@@ -209,7 +209,7 @@ namespace Hazel {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		DrawQuad(transform, texture, tilingFactor);
+		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
@@ -252,7 +252,7 @@ namespace Hazel {
 		float textureIndex = 0.0f;//该变量记录当前texture 关联slot 的索引值
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)//判断当前texture在TextureSlots缓存中是否存在，存在的话取出texture对应的slot index
 		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+			if (*s_Data.TextureSlots[i] == *texture)
 			{
 				textureIndex = (float)i;
 				break;
