@@ -225,7 +225,9 @@ namespace Hazel {
 
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			// TODO 这里为什么要添加transfrom tranform已经在BeginScene时用于计算VP矩阵？？
+			// 可能是这里的transform被用来计算模型变换(把模型放在世界坐标系中) 将顶点坐标从模型坐标系转为世界坐标系中
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i]; 
 			s_Data.QuadVertexBufferPtr->Color = color;
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;

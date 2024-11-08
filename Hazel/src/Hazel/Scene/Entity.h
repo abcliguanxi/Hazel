@@ -40,7 +40,7 @@ namespace Hazel {
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
-		operator bool() { return m_EntityHandle != entt::null; }
+		operator bool() const { return m_EntityHandle != entt::null; }
 	private:
 		entt::entity m_EntityHandle{ entt::null };//m_Registry.create();返回的值是从0开始的
 		Scene* m_Scene = nullptr;

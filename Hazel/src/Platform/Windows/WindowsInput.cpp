@@ -33,7 +33,7 @@ namespace Hazel {
 
 	float Input::GetMouseX()
 	{
-		auto v = GetMousePosition();//C++17Óï·¨
+		auto v = GetMousePosition();
 		return std::get<0>(v);
 	}
 
