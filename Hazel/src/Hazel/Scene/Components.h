@@ -62,7 +62,8 @@ namespace Hazel {
 		void Bind()
 		{
 			//设置几个回调函数
-			InstantiateScript = []() {return  static_cast<ScriptableEntity*>(new T()); };//初始化NativeScriptComponent类 Instance成员 父类指针指向子类对象
+			//InstantiateScript = []() {Instance = static_cast<ScriptableEntity*>(new T()); return Instance; };//初始化NativeScriptComponent类 Instance成员 父类指针指向子类对象
+			InstantiateScript = []() {return static_cast<ScriptableEntity*>(new T()); };//初始化NativeScriptComponent类 Instance成员 父类指针指向子类对象
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 
