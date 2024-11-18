@@ -64,7 +64,7 @@ namespace Hazel {
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);//这个函数会计算 VP 变换矩阵 并设置至shader中
+			Renderer2D::BeginScene(*mainCamera, *cameraTransform);//这个函数会计算 VP 变换矩阵 并设置至shader中
 
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
