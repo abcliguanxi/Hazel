@@ -28,7 +28,7 @@ namespace Hazel {
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		friend class Entity;
+		friend class SceneSerializer; //友元类，可互相访问各自的private成员
 		friend class SceneHierarchyPanel;
 	};
-
 }
