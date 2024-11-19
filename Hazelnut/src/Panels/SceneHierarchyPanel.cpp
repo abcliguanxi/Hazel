@@ -35,11 +35,48 @@ namespace Hazel {
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
 
+		// Right-click on blank space
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+			{
+				auto& entity = m_Context->CreateEntity("Empty Entity");
+				//entity.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 1.0f, 0.0f, 1.0f });
+			}
+				
+
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectionContext)
+		if (m_SelectionContext)//选中了场景中物体才能添加Component
+		{
 			DrawComponents(m_SelectionContext);
+
+			if (ImGui::Button("Add Component"))//点击 Add Component后响应
+				ImGui::OpenPopup("AddComponent");//打开Add Componet 菜单
+
+			if (ImGui::BeginPopup("AddComponent"))//打开了 Add Componet菜单，能添加 CameraComponent以及SpriteRendererComponent
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+		}
 
 		ImGui::End();
 	}
@@ -55,6 +92,15 @@ namespace Hazel {
 			m_SelectionContext = entity;
 		}
 
+		bool entityDeleted = false;
+		if (ImGui::BeginPopupContextItem())//右键菜单栏
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+				entityDeleted = true;
+
+			ImGui::EndPopup();
+		}
+
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
@@ -64,6 +110,12 @@ namespace Hazel {
 			ImGui::TreePop();
 		}
 
+		if (entityDeleted)
+		{
+			m_Context->DestroyEntity(entity);
+			if (m_SelectionContext == entity)
+				m_SelectionContext = {};
+		}
 	}
 
 	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
@@ -122,7 +174,7 @@ namespace Hazel {
 
 		ImGui::PopID();
 	}
-	
+
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
@@ -139,9 +191,13 @@ namespace Hazel {
 			}
 		}
 
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+
 		if (entity.HasComponent<TransformComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), treeNodeFlags, "Transform");
+			
+			if (open)
 			{
 				auto& tc = entity.GetComponent<TransformComponent>();
 				DrawVec3Control("Translation", tc.Translation);
@@ -156,7 +212,7 @@ namespace Hazel {
 
 		if (entity.HasComponent<CameraComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), treeNodeFlags, "Camera"))
 			{
 				auto& cameraComponent = entity.GetComponent<CameraComponent>();
 				auto& camera = cameraComponent.Camera;
@@ -171,7 +227,7 @@ namespace Hazel {
 					{
 						//如果当前相机投影类型与combo中选择的投影类型不一致 需要重新设置currentProjectionTypeString
 						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-						if (ImGui::Selectable(projectionTypeStrings[i],isSelected))
+						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
 						{
 							currentProjectionTypeString = projectionTypeStrings[i];
 							camera.SetProjectionType((SceneCamera::ProjectionType)i);
@@ -223,12 +279,33 @@ namespace Hazel {
 
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), treeNodeFlags, "Sprite Renderer");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+			if (ImGui::Button("+", ImVec2{ 20, 20 }))//如果点击+按键,会打开一个ComponentSettings 窗口
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+			ImGui::PopStyleVar();
+
+			bool removeComponent = false;
+			if (ImGui::BeginPopup("ComponentSettings"))//如果打开一个ComponentSettings 窗口
+			{
+				if (ImGui::MenuItem("Remove component"))//在窗口上绘制Remove component菜单
+					removeComponent = true;
+
+				ImGui::EndPopup();//关闭ComponentSettings 窗口
+			}
+
+			if (open)
 			{
 				auto& src = entity.GetComponent<SpriteRendererComponent>();
 				ImGui::ColorEdit4("Color", glm::value_ptr(src.Color));
 				ImGui::TreePop();
 			}
+
+			if (removeComponent)
+				entity.RemoveComponent<SpriteRendererComponent>();
 		}
 	}
 }
