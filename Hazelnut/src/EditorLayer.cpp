@@ -139,8 +139,10 @@ namespace Hazel {
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);//Texture.glsl shader中color2全部为50
-			HZ_CORE_WARN("Pixel data = {0}", pixelData);
+			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			// 这里pixelData在Texture.glsl中设置为了entityID
+			// 如果没有像素值(代表鼠标没有点到渲染的物体) 设置一个空Entity
+			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
 		}
 
 		m_Framebuffer->Unbind();
@@ -226,6 +228,11 @@ namespace Hazel {
 		m_SceneHierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Stats");
+
+		std::string name = "None";
+		if (m_HoveredEntity)
+			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+		ImGui::Text("Hovered Entity: %s", name.c_str());
 
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
