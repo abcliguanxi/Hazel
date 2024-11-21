@@ -46,6 +46,7 @@ namespace Hazel {
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportBounds[2];////ViewPort左上角为原点 保存ViewPort窗口的左上角与右下角坐标
 
 		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
@@ -54,5 +55,4 @@ namespace Hazel {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
-
 }
