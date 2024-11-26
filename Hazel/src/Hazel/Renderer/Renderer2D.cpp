@@ -11,9 +11,9 @@ namespace Hazel {
 
 	struct QuadVertex
 	{
-		glm::vec3 Position; //顶点对应的模型坐标
-		glm::vec4 Color; //顶点对应的颜色信息
-		glm::vec2 TexCoord; //顶点对应的纹理坐标
+		glm::vec3 Position;		//顶点对应的模型坐标【Model变换后】
+		glm::vec4 Color;		//顶点对应的颜色信息
+		glm::vec2 TexCoord;		//顶点对应的纹理坐标
 		float TexIndex;
 		float TilingFactor;
 
@@ -40,7 +40,7 @@ namespace Hazel {
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
 
-		glm::vec4 QuadVertexPositions[4];
+		glm::vec4 QuadVertexPositions[4];//square 四边形4个顶点对应的模型坐标系下坐标
 
 		Renderer2D::Statistics Stats;
 	};
@@ -62,6 +62,7 @@ namespace Hazel {
 			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};*/
+		//2. VB and layout 
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 		s_Data.QuadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },
@@ -72,7 +73,7 @@ namespace Hazel {
 			{ ShaderDataType::Int,    "a_EntityID"     }
 		});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];//创建所有顶点数据堆内存
 
 		//3. Index Buffer
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
@@ -95,6 +96,7 @@ namespace Hazel {
 		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 
+		//4. Texture
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;//16进制白色数据表示 RGBA ff ff ff ff
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
@@ -103,6 +105,7 @@ namespace Hazel {
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
+		//5. shader
 		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);//将u_Texture与slot 0-31绑定
@@ -111,6 +114,7 @@ namespace Hazel {
 		// Set all texture slots to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
+		// 初始化四边形模型坐标系的顶点坐标[x,y,z,w]齐次坐标
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
@@ -240,7 +244,7 @@ namespace Hazel {
 		{
 			// TODO 这里为什么要添加transfrom tranform已经在BeginScene时用于计算VP矩阵？？
 			// 可能是这里的transform被用来计算模型变换(把模型放在世界坐标系中) 将顶点坐标从模型坐标系转为世界坐标系中
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i]; 
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i]; // [3,4]*[4,1]=[3,1]
 			s_Data.QuadVertexBufferPtr->Color = color;
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;

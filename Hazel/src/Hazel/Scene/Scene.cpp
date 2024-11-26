@@ -86,8 +86,10 @@ namespace Hazel {
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);//这个函数会计算 VP 变换矩阵 并设置至shader中
+		//1. 计算当前camera VP 变换矩阵 并设置至shader中
+		Renderer2D::BeginScene(camera);
 
+		//2. 遍历当前场景中所有entity,并获取对应entity的Transform【相当于模型放在世界坐标系中位置,也就是M,与1构成MVP变换】
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group)
 		{
