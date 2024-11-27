@@ -62,7 +62,7 @@ namespace Hazel {
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectionContext)//选中了场景中物体才能添加Component
+		if (m_SelectionContext)//选中了场景中物体才能添加Component以及绘制component对应的UI
 		{
 			DrawComponents(m_SelectionContext);
 		}
@@ -75,6 +75,7 @@ namespace Hazel {
 		m_SelectionContext = entity;
 	}
 
+	//将场景中所有的entity绘制至Scene Panel中
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;

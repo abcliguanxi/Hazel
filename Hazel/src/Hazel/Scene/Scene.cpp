@@ -90,6 +90,7 @@ namespace Hazel {
 		Renderer2D::BeginScene(camera);
 
 		//2. 遍历当前场景中所有entity,并获取对应entity的Transform【相当于模型放在世界坐标系中位置,也就是M,与1构成MVP变换】
+		// 同时调用绘制命令在viewport窗口中进行绘制
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group)
 		{
