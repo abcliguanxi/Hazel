@@ -7,6 +7,7 @@
 
 #include "Hazel/Scene/Components.h"
 #include <cstring>
+#include <filesystem>
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
