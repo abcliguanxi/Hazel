@@ -16,7 +16,7 @@ namespace Hazel {
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(Timestep ts) {}
 	private:
-		Entity m_Entity;//哪个实体挂在脚本 该变量就存哪个
+		Entity m_Entity;//哪个实体挂载脚本 该变量就存哪个
 		friend class Scene;
 	};
 }
