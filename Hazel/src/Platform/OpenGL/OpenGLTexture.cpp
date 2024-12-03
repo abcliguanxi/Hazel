@@ -35,9 +35,13 @@ namespace Hazel {
 			HZ_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
-		HZ_CORE_ASSERT(data, "Failed to load image!");
-		m_Width = width;
-		m_Height = height;
+			
+		if (data)
+		{
+			m_IsLoaded = true;
+
+			m_Width = width;
+			m_Height = height;
 
 		GLenum internalFormat = 0, dataFormat = 0;
 		if (channels == 4)
@@ -67,7 +71,8 @@ namespace Hazel {
 
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
-		stbi_image_free(data);
+			stbi_image_free(data);
+		}
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
