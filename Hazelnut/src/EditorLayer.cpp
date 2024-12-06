@@ -89,21 +89,21 @@ namespace Hazel {
 
 			m_EditorCamera.OnUpdate(ts);
 
-				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-				break;
-			}
-			case SceneState::Simulate:
-			{
-				m_EditorCamera.OnUpdate(ts);
+			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+			break;
+		}
+		case SceneState::Simulate:
+		{
+			m_EditorCamera.OnUpdate(ts);
 
-				m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
-				break;
-			}
-			case SceneState::Play:
-			{
-				m_ActiveScene->OnUpdateRuntime(ts);
-				break;
-			}
+			m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+			break;
+		}
+		case SceneState::Play:
+		{
+			m_ActiveScene->OnUpdateRuntime(ts);
+			break;
+		}
 		}
 
 		auto [mx, my] = ImGui::GetMousePos();
@@ -469,7 +469,7 @@ namespace Hazel {
 			Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
 			if (!camera)
 				return;
-			
+
 			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
 		}
 		else
