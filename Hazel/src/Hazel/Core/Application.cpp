@@ -1,9 +1,10 @@
-#include "hzpch.h"
+ï»¿#include "hzpch.h"
 #include "Hazel/Core/Application.h"
 
 #include "Hazel/Core/Log.h"
 
 #include "Hazel/Renderer/Renderer.h"
+#include "Hazel/Scripting/ScriptEngine.h"
 
 #include "Hazel/Core/Input.h"
 #include "Hazel/Utils/PlatformUtils.h"
@@ -29,8 +30,9 @@ namespace Hazel {
 		m_Window->SetEventCallback(HZ_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
+		ScriptEngine::Init();
 
-		// Application Ò»¶¨ÓĞImGuiLayer ºóĞø¿ÉÒÔÍ¨¹ıÅäÖÃ½øĞĞ¿ÉÊÓ»¯
+		// Application ä¸€å®šæœ‰ImGuiLayer åç»­å¯ä»¥é€šè¿‡é…ç½®è¿›è¡Œå¯è§†åŒ–
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 	}
@@ -39,6 +41,7 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
+		ScriptEngine::Shutdown();
 		Renderer::Shutdown();
 	}
 
@@ -71,8 +74,8 @@ namespace Hazel {
 		dispatcher.Dispatch<WindowCloseEvent>(HZ_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(Application::OnWindowResize));
 
-		//äÖÈ¾´¦ÀíÕıÏò±éÀú ºóÑ¹ÈëµÄ²ãºó½øĞĞäÖÈ¾(¸²¸ÇÇ°ÃæµÄ²ã)
-		//ÊÂ¼ş´¦Àí·´Ïò±éÀú ºóÑ¹ÈëµÄ²ãÏÈ´¦ÀíÊÂ¼ş ,Òò´ËÕâÀïÈ¡rbegin()
+		//æ¸²æŸ“å¤„ç†æ­£å‘éå† åå‹å…¥çš„å±‚åè¿›è¡Œæ¸²æŸ“(è¦†ç›–å‰é¢çš„å±‚)
+		//äº‹ä»¶å¤„ç†åå‘éå† åå‹å…¥çš„å±‚å…ˆå¤„ç†äº‹ä»¶ ,å› æ­¤è¿™é‡Œå–rbegin()
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
 			if (e.Handled) 
@@ -93,7 +96,7 @@ namespace Hazel {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			if (!m_Minimized)//³ıÁËImGUIÍâ,ÆäËûµÄLayerÔÚwindow×îĞ¡»¯ºó²»¿É¼û
+			if (!m_Minimized)//é™¤äº†ImGUIå¤–,å…¶ä»–çš„Layeråœ¨windowæœ€å°åŒ–åä¸å¯è§
 			{
 				{
 					HZ_PROFILE_SCOPE("LayerStack OnUpdate");

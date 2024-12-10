@@ -639,5 +639,4 @@ namespace Hazel {
 		if (selectedEntity)
 			m_EditorScene->DuplicateEntity(selectedEntity);
 	}
-
 }
