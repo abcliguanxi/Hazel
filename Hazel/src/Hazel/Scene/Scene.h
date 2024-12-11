@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Hazel/Core/Timestep.h"
 #include "Hazel/Core/UUID.h"
@@ -37,6 +37,8 @@ namespace Hazel {
 
 		void DuplicateEntity(Entity entity);
 
+		Entity GetEntityByUUID(UUID uuid);
+
 		Entity GetPrimaryCameraEntity();
 
 		template<typename... Components>
@@ -58,8 +60,10 @@ namespace Hazel {
 
 		b2World* m_PhysicsWorld = nullptr;
 
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
 		friend class Entity;
-		friend class SceneSerializer; //ÓÑÔªÀà£¬¿É»¥Ïà·ÃÎÊ¸÷×ÔµÄprivate³ÉÔ±
+		friend class SceneSerializer; //å‹å…ƒç±»ï¼Œå¯äº’ç›¸è®¿é—®å„è‡ªçš„privateæˆå‘˜
 		friend class SceneHierarchyPanel;
 	};
 }

@@ -1,14 +1,17 @@
-#include "hzpch.h"
+ï»¿#include "hzpch.h"
 #include "Scene.h"
+#include "Entity.h"
 
 #include "Components.h"
 #include "ScriptableEntity.h"
+#include "Hazel/Scripting/ScriptEngine.h"
 #include "Hazel/Renderer/Renderer2D.h"
 
 #include <glm/glm.hpp>
 
 #include "Entity.h"
 
+// Box2D
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
@@ -42,16 +45,16 @@ namespace Hazel {
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
 		([&]()
-		{
-			auto view = src.view<Component>();
-			for (auto srcEntity : view)
 			{
-				entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).ID);
+				auto view = src.view<Component>();
+				for (auto srcEntity : view)
+				{
+					entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).ID);
 
-				auto& srcComponent = src.get<Component>(srcEntity);
-				dst.emplace_or_replace<Component>(dstEntity, srcComponent);
-			}
-		}(), ...);
+					auto& srcComponent = src.get<Component>(srcEntity);
+					dst.emplace_or_replace<Component>(dstEntity, srcComponent);
+				}
+			}(), ...);
 	}
 
 	template<typename... Component>
@@ -64,10 +67,10 @@ namespace Hazel {
 	static void CopyComponentIfExists(Entity dst, Entity src)
 	{
 		([&]()
-		{
-			if (src.HasComponent<Component>())
-				dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
-		}(), ...);
+			{
+				if (src.HasComponent<Component>())
+					dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+			}(), ...);
 	}
 
 	template<typename... Component>
@@ -115,33 +118,51 @@ namespace Hazel {
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+
+		m_EntityMap[uuid] = entity;
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	void Scene::OnRuntimeStart()
 	{
-		OnSimulationStart();
+		OnPhysics2DStart();
+
+		{
+			// scripting
+			ScriptEngine::OnRuntimeStart(this);
+			// Instantiate all script entities,å¦‚æœå½“å‰entityæŒ‚è½½äº†è„šæœ¬ï¼Œéœ€è¦å°†è„šæœ¬çš„æ–¹æ¡ˆé€šè¿‡monoåœ¨hazelæ ¸å¿ƒæ¨¡å—ä¸­loadï¼Œæ–¹ä¾¿åç»­C++è°ƒç”¨æ¯ä¸ªè„šæœ¬çš„C#æ–¹æ³•
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e,this };
+				ScriptEngine::OnCreateEntity(entity);
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
-		OnSimulationStop();
+		OnPhysics2DStop();
+
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
 	{
-		//¿ªÆô2DÎïÀí·ÂÕæ
+		//å¼€å¯2Dç‰©ç†ä»¿çœŸ
 		OnPhysics2DStart();
 	}
 
 	void Scene::OnSimulationStop()
 	{
-		//½áÊø2DÎïÀí·ÂÕæ
+		//ç»“æŸ2Dç‰©ç†ä»¿çœŸ
 		OnPhysics2DStop();
 	}
 
@@ -149,17 +170,26 @@ namespace Hazel {
 	{
 		// Update scripts
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)//ÊµÌåID ºÍ¶ÔÓ¦µÄ×é¼şÒıÓÃ
+			// C# Entity OnUpdate
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnUpdateEntity(entity, ts);
+			}
+
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			{
+				// TODO: Move to Scene::OnScenePlay
+				if (!nsc.Instance)
 				{
-					// TODO: Move to Scene:OnScenePlay
-					if (!nsc.Instance)//µ±Ç°×é¼şÎ´³õÊ¼»¯
-					{
-						nsc.Instance = nsc.InstantiateScript();
-						nsc.Instance->m_Entity = Entity{ entity, this };
-						nsc.Instance->OnCreate();
-					}
-					nsc.Instance->OnUpdate(ts);
-				});
+					nsc.Instance = nsc.InstantiateScript();
+					nsc.Instance->m_Entity = Entity{ entity, this };
+					nsc.Instance->OnCreate();
+				}
+
+				nsc.Instance->OnUpdate(ts);
+			});
 		}
 
 		// Physics
@@ -204,7 +234,7 @@ namespace Hazel {
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);//Õâ¸öº¯Êı»á¼ÆËã VP ±ä»»¾ØÕó ²¢ÉèÖÃÖÁshaderÖĞ
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);//è¿™ä¸ªå‡½æ•°ä¼šè®¡ç®— VP å˜æ¢çŸ©é˜µ å¹¶è®¾ç½®è‡³shaderä¸­
 
 			// Draw sprites
 			{
@@ -301,11 +331,20 @@ namespace Hazel {
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 	}
 
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		// TODO(Yan): Maybe should be assert
+		if (m_EntityMap.find(uuid) != m_EntityMap.end())
+			return { m_EntityMap.at(uuid), this };
+
+		return {};
+	}
+
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ 0.0f ,-9.8f });
 		auto view = m_Registry.view<Rigidbody2DComponent>();
-		for (auto e : view)//RuntimeÆô¶¯ºó,±éÀúËùÓĞEntity,Èç¹û¸½´øÁËRigidbody2DComponent,½«¸ÃentityµÄRigidbody2DComponent×é¼şRuntimeÉèÖÃÎªb2body
+		for (auto e : view)//Runtimeå¯åŠ¨å,éå†æ‰€æœ‰Entity,å¦‚æœé™„å¸¦äº†Rigidbody2DComponent,å°†è¯¥entityçš„Rigidbody2DComponentç»„ä»¶Runtimeè®¾ç½®ä¸ºb2body
 		{
 			Entity entity = { e, this };
 			auto& transform = entity.GetComponent<TransformComponent>();
@@ -363,7 +402,7 @@ namespace Hazel {
 
 	void Scene::RenderScene(EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);//Õâ¸öº¯Êı»á¼ÆËã VP ±ä»»¾ØÕó ²¢ÉèÖÃÖÁshaderÖĞ
+		Renderer2D::BeginScene(camera);//è¿™ä¸ªå‡½æ•°ä¼šè®¡ç®— VP å˜æ¢çŸ©é˜µ å¹¶è®¾ç½®è‡³shaderä¸­
 
 		// Draw sprites
 		{
@@ -389,8 +428,8 @@ namespace Hazel {
 
 		Renderer2D::EndScene();
 	}
-  
-  template<typename T>
+
+	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
 		static_assert(sizeof(T) == 0);
@@ -411,6 +450,11 @@ namespace Hazel {
 	{
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
+	{
 	}
 
 	template<>

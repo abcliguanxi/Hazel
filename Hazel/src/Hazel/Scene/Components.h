@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "SceneCamera.h"
 #include "Hazel/Core/UUID.h"
@@ -77,10 +77,18 @@ namespace Hazel {
 	{
 		SceneCamera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
-		bool FixedAspectRatio = false; // ÊÇ·ñ¹Ì¶¨×İºá±È 
+		bool FixedAspectRatio = false; // æ˜¯å¦å›ºå®šçºµæ¨ªæ¯” 
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct ScriptComponent
+	{
+		std::string ClassName;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
 	};
 
 	// Forward declaration
@@ -90,16 +98,16 @@ namespace Hazel {
 	{
 		ScriptableEntity* Instance = nullptr;
 
-		//¶¨Òåº¯ÊıÖ¸Õë
+		//å®šä¹‰å‡½æ•°æŒ‡é’ˆ
 		ScriptableEntity* (*InstantiateScript)();
 		void (*DestroyScript)(NativeScriptComponent*);
 
 		template<typename T>
 		void Bind()
 		{
-			//ÉèÖÃ¼¸¸ö»Øµ÷º¯Êı
-			//InstantiateScript = []() {Instance = static_cast<ScriptableEntity*>(new T()); return Instance; };//³õÊ¼»¯NativeScriptComponentÀà Instance³ÉÔ± ¸¸ÀàÖ¸ÕëÖ¸Ïò×ÓÀà¶ÔÏó
-			InstantiateScript = []() {return static_cast<ScriptableEntity*>(new T()); };//³õÊ¼»¯NativeScriptComponentÀà Instance³ÉÔ± ¸¸ÀàÖ¸ÕëÖ¸Ïò×ÓÀà¶ÔÏó
+			//è®¾ç½®å‡ ä¸ªå›è°ƒå‡½æ•°
+			//InstantiateScript = []() {Instance = static_cast<ScriptableEntity*>(new T()); return Instance; };//åˆå§‹åŒ–NativeScriptComponentç±» Instanceæˆå‘˜ çˆ¶ç±»æŒ‡é’ˆæŒ‡å‘å­ç±»å¯¹è±¡
+			InstantiateScript = []() {return static_cast<ScriptableEntity*>(new T()); };//åˆå§‹åŒ–NativeScriptComponentç±» Instanceæˆå‘˜ çˆ¶ç±»æŒ‡é’ˆæŒ‡å‘å­ç±»å¯¹è±¡
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
@@ -163,7 +171,8 @@ namespace Hazel {
 
 	using AllComponents = 
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
-			CircleRendererComponent, CameraComponent, NativeScriptComponent,
-			Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
+			CircleRendererComponent, CameraComponent, ScriptComponent,
+		NativeScriptComponent,Rigidbody2DComponent, BoxCollider2DComponent, 
+		CircleCollider2DComponent>;
 
 }

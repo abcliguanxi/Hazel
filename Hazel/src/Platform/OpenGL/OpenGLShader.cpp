@@ -1,4 +1,4 @@
-#include "hzpch.h"
+ï»¿#include "hzpch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 
@@ -109,7 +109,7 @@ namespace Hazel {
 		}
 
 		// Extract name from filepath assets/shaders/Texture.shader.glsl
-		auto lastSlash = filepath.find_last_of("/\\"); // ÕÒµ½×îºóÒ»¸ö/ or ·´Ğ±¸Ü
+		auto lastSlash = filepath.find_last_of("/\\"); // æ‰¾åˆ°æœ€åä¸€ä¸ª/ or åæ–œæ 
 		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 		auto lastDot = filepath.rfind('.');
 		auto count = lastDot==std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
@@ -176,15 +176,15 @@ namespace Hazel {
 		size_t pos = source.find(typeToken, 0);
 		while (pos != std::string::npos)
 		{
-			size_t eol = source.find_first_of("\r\n", pos);//ÕÒµ½posÎ»ÖÃÖ®ºóµÚÒ»¸öµÈÓÚ"\r\n"µÄ×Ö·ûÎ»ÖÃ
+			size_t eol = source.find_first_of("\r\n", pos);//æ‰¾åˆ°posä½ç½®ä¹‹åç¬¬ä¸€ä¸ªç­‰äº"\r\n"çš„å­—ç¬¦ä½ç½®
 			HZ_CORE_ASSERT(eol != std::string::npos, "Syntax error");
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
 			HZ_CORE_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified");
 
-			size_t nextLinePos = source.find_first_not_of("\r\n", eol);//ÕÒµ½posÎ»ÖÃÖ®ºóµÚÒ»¸ö²»µÈÓÚ"\r\n"µÄ×Ö·ûÎ»ÖÃ
+			size_t nextLinePos = source.find_first_not_of("\r\n", eol);//æ‰¾åˆ°posä½ç½®ä¹‹åç¬¬ä¸€ä¸ªä¸ç­‰äº"\r\n"çš„å­—ç¬¦ä½ç½®
 			HZ_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
-			pos = source.find(typeToken, nextLinePos);//´ÓnextLinePose¿ªÊ¼ÕÒµ½ÏÂÒ»¸ötypeµÄÎ»ÖÃ
+			pos = source.find(typeToken, nextLinePos);//ä»nextLinePoseå¼€å§‹æ‰¾åˆ°ä¸‹ä¸€ä¸ªtypeçš„ä½ç½®
 			shaderSources[Utils::ShaderTypeFromString(type)] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
 		}
 

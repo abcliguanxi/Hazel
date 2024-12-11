@@ -1,4 +1,4 @@
-#include "EditorLayer.h"
+ï»¿#include "EditorLayer.h"
 #include "Hazel/Scene/SceneSerializer.h"
 #include "Hazel/Utils/PlatformUtils.h"
 #include "Hazel/Math/Math.h"
@@ -29,8 +29,8 @@ namespace Hazel {
 		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
 
 		FramebufferSpecification fbSpec;
-		//ÕâÀïÌí¼ÓÁËÁ½¸öcolor frame buffer£¬ÔÚtexture.glslÖĞ Æ¬¶Î×ÅÉ«Æ÷Êä³öÁ½¸öcolor£¬µÚ¶ş¸öcolor_2»á»æÖÆµ½µÚ¶ş¸öFramebufferÖĞ£¬
-		// ºóĞø¿ÉÍ¨¹ı glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex)¶ÁÈ¡µ½¶ÔÓ¦framebufferÖĞµÄÖµ
+		//è¿™é‡Œæ·»åŠ äº†ä¸¤ä¸ªcolor frame bufferï¼Œåœ¨texture.glslä¸­ ç‰‡æ®µç€è‰²å™¨è¾“å‡ºä¸¤ä¸ªcolorï¼Œç¬¬äºŒä¸ªcolor_2ä¼šç»˜åˆ¶åˆ°ç¬¬äºŒä¸ªFramebufferä¸­ï¼Œ
+		// åç»­å¯é€šè¿‡ glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex)è¯»å–åˆ°å¯¹åº”framebufferä¸­çš„å€¼
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
@@ -48,7 +48,7 @@ namespace Hazel {
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-		Renderer2D::SetLineWidth(4.0f);
+		Renderer2D::SetLineWidth(1.0f);
 	}
 
 	void EditorLayer::OnDetach()
@@ -77,7 +77,7 @@ namespace Hazel {
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		RenderCommand::Clear();
 
-		// Clear our entity ID attachment to -1,ÏÈ½«attachmentIndex = 1µÄframebufferµÄÊıÖµ¶¼ÉèÖÃÎª-1,ÔÚTexture.glsl shaderÖĞ½«»æÖÆµÄsquareÇøÓòµÄÖµÉèÖÃÎª50
+		// Clear our entity ID attachment to -1,å…ˆå°†attachmentIndex = 1çš„framebufferçš„æ•°å€¼éƒ½è®¾ç½®ä¸º-1,åœ¨Texture.glsl shaderä¸­å°†ç»˜åˆ¶çš„squareåŒºåŸŸçš„å€¼è®¾ç½®ä¸º50
 		m_Framebuffer->ClearAttachment(1, -1);
 
 		switch (m_SceneState)
@@ -110,15 +110,15 @@ namespace Hazel {
 		mx -= m_ViewportBounds[0].x;
 		my -= m_ViewportBounds[0].y;
 		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-		my = viewportSize.y - my;//Y·­×ª °Ñ×óÏÂ½ÇÉèÖÃÎªÔ­µã
+		my = viewportSize.y - my;//Yç¿»è½¬ æŠŠå·¦ä¸‹è§’è®¾ç½®ä¸ºåŸç‚¹
 		int mouseX = (int)mx;
 		int mouseY = (int)my;
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-			// ÕâÀïpixelDataÔÚTexture.glslÖĞÉèÖÃÎªÁËentityID
-			// Èç¹ûÃ»ÓĞÏñËØÖµ(´ú±íÊó±êÃ»ÓĞµãµ½äÖÈ¾µÄÎïÌå) ÉèÖÃÒ»¸ö¿ÕEntity
+			// è¿™é‡ŒpixelDataåœ¨Texture.glslä¸­è®¾ç½®ä¸ºäº†entityID
+			// å¦‚æœæ²¡æœ‰åƒç´ å€¼(ä»£è¡¨é¼ æ ‡æ²¡æœ‰ç‚¹åˆ°æ¸²æŸ“çš„ç‰©ä½“) è®¾ç½®ä¸€ä¸ªç©ºEntity
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
 		}
 
@@ -296,7 +296,7 @@ namespace Hazel {
 				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
 				nullptr, snap ? snapValues : nullptr);
 
-			if (ImGuizmo::IsUsing())//Èç¹ûÊ¹ÓÃÁËImGuizmo,ÔòĞèÒª½«ĞŞ¸ÄºóµÄ½á¹û¸üĞÂÖÁtcÖĞ
+			if (ImGuizmo::IsUsing())//å¦‚æœä½¿ç”¨äº†ImGuizmo,åˆ™éœ€è¦å°†ä¿®æ”¹åçš„ç»“æœæ›´æ–°è‡³tcä¸­
 			{
 				glm::vec3 translation, rotation, scale;
 				Math::DecomposeTransform(transform, translation, rotation, scale);
@@ -543,7 +543,7 @@ namespace Hazel {
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
-		if (m_SceneState != SceneState::Edit)//´ò¿ªĞÂ³¡¾°Ê±ĞèÒªÍ£Ö¹¾É³¡¾°
+		if (m_SceneState != SceneState::Edit)//æ‰“å¼€æ–°åœºæ™¯æ—¶éœ€è¦åœæ­¢æ—§åœºæ™¯
 			OnSceneStop();
 
 		if (path.extension().string() != ".hazel")
