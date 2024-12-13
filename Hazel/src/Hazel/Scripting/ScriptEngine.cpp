@@ -114,6 +114,7 @@ namespace Hazel {
 		LoadAssembly("Resources/Scripts/Hazel-ScriptCore.dll");
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
 		// Retrieve and instantiate class (with constructor)
