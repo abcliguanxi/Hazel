@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include <filesystem>
-#include <string>
-
 #include "Hazel/Scene/Scene.h"
 #include "Hazel/Scene/Entity.h"
+
+#include <filesystem>
+#include <string>
 
 //这段代码告诉编译器有MonoClass的定义不要报错,真正在cpp文件中 能够在mono找到对应的定义
 extern "C" {//指示编译器这部分的代码按C语言，而不是C++的方式进行编译。
@@ -24,7 +24,7 @@ namespace Hazel {
 	{
 	public:
 		ScriptClass() = default;
-		ScriptClass(const std::string& classNamespace, const std::string& className);
+		ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore = false);
 
 		MonoObject* Instantiate();
 		MonoMethod* GetMethod(const std::string& name, int parameterCount);
@@ -60,6 +60,8 @@ namespace Hazel {
 		static void Shutdown();
 
 		static void LoadAssembly(const std::filesystem::path& filepath);
+		static void LoadAppAssembly(const std::filesystem::path& filepath);
+		
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
 
@@ -69,14 +71,14 @@ namespace Hazel {
 
 		static Scene* GetSceneContext();
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
-
+		
 		static MonoImage* GetCoreAssemblyImage();
 	private:
 		static void InitMono();
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
-		static void LoadAssemblyClasses(MonoAssembly* assembly);
+		static void LoadAssemblyClasses();
 
 		friend class ScriptClass;
 		friend class ScriptGlue;
