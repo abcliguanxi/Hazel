@@ -1,4 +1,4 @@
-#include "SceneHierarchyPanel.h"
+ï»¿#include "SceneHierarchyPanel.h"
 #include "Hazel/Scene/Components.h"
 
 #include "Hazel/Scripting/ScriptEngine.h"
@@ -38,7 +38,7 @@ namespace Hazel {
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		// »ñÈ¡µ±Ç°³¡¾°ÖĞËùÓĞµÄentity£¬²¢ÏÔÊ¾ÔÚImGui½çÃæÉÏ
+		// è·å–å½“å‰åœºæ™¯ä¸­æ‰€æœ‰çš„entityï¼Œå¹¶æ˜¾ç¤ºåœ¨ImGuiç•Œé¢ä¸Š
 		if (m_Context)
 		{
 			for (entt::entity entityID : m_Context->m_Registry.view<entt::entity>())
@@ -67,7 +67,7 @@ namespace Hazel {
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_SelectionContext)//Ñ¡ÖĞÁË³¡¾°ÖĞÎïÌå²ÅÄÜÌí¼ÓComponentÒÔ¼°»æÖÆcomponent¶ÔÓ¦µÄUI
+		if (m_SelectionContext)//é€‰ä¸­äº†åœºæ™¯ä¸­ç‰©ä½“æ‰èƒ½æ·»åŠ Componentä»¥åŠç»˜åˆ¶componentå¯¹åº”çš„UI
 		{
 			DrawComponents(m_SelectionContext);
 		}
@@ -80,7 +80,7 @@ namespace Hazel {
 		m_SelectionContext = entity;
 	}
 
-	//½«³¡¾°ÖĞËùÓĞµÄentity»æÖÆÖÁScene PanelÖĞ
+	//å°†åœºæ™¯ä¸­æ‰€æœ‰çš„entityç»˜åˆ¶è‡³Scene Panelä¸­
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -94,7 +94,7 @@ namespace Hazel {
 		}
 
 		bool entityDeleted = false;
-		if (ImGui::BeginPopupContextItem())//ÓÒ¼ü²Ëµ¥À¸
+		if (ImGui::BeginPopupContextItem())//å³é”®èœå•æ 
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				entityDeleted = true;
@@ -234,7 +234,7 @@ namespace Hazel {
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+			strncpy_s(buffer, sizeof(buffer), tag.c_str(), sizeof(buffer));
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
@@ -278,12 +278,12 @@ namespace Hazel {
 				ImGui::Checkbox("Primary", &component.Primary);
 
 				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-				const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];//1. »ñÈ¡µ±Ç°Ïà»úµÄÍ¶Ó°ÀàĞÍ
-				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))//combo selectĞŞ¸ÄÏìÓ¦ºó½øÈë¸Ã´úÂë
+				const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];//1. è·å–å½“å‰ç›¸æœºçš„æŠ•å½±ç±»å‹
+				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))//combo selectä¿®æ”¹å“åº”åè¿›å…¥è¯¥ä»£ç 
 				{
-					for (int i = 0; i < 2; i++)//2. ±éÀúcomboÖĞµÄÍ¶Ó°ÀàĞÍ
+					for (int i = 0; i < 2; i++)//2. éå†comboä¸­çš„æŠ•å½±ç±»å‹
 					{
-						//Èç¹ûµ±Ç°Ïà»úÍ¶Ó°ÀàĞÍÓëcomboÖĞÑ¡ÔñµÄÍ¶Ó°ÀàĞÍ²»Ò»ÖÂ ĞèÒªÖØĞÂÉèÖÃcurrentProjectionTypeString
+						//å¦‚æœå½“å‰ç›¸æœºæŠ•å½±ç±»å‹ä¸comboä¸­é€‰æ‹©çš„æŠ•å½±ç±»å‹ä¸ä¸€è‡´ éœ€è¦é‡æ–°è®¾ç½®currentProjectionTypeString
 						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
 						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
 						{
@@ -331,12 +331,12 @@ namespace Hazel {
 				}
 			});
 
-		DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
+		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 		{
 			bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
 
 			static char buffer[64];
-			strcpy(buffer, component.ClassName.c_str());
+			strcpy_s(buffer, sizeof(buffer), component.ClassName.c_str());
 
 			if (!scriptClassExists)
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f));
@@ -345,19 +345,65 @@ namespace Hazel {
 				component.ClassName = buffer;
 
 			// Fields
-			Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-			if (scriptInstance)
+			// è¿™æ®µä»£ç æ•´ä½“æ€è·¯å°±æ˜¯åœ¨Editorä¸‹å¯¹UIç•Œé¢ä¸­C#å±æ€§è¿›è¡Œè°ƒæ•´åï¼Œä¼šæŠŠè°ƒæ•´çš„å˜é‡ä¿å­˜è‡³ScriptFieldInstance.m_Bufferä¸­
+			// ç­‰åˆ°Runtimeæ—¶ï¼Œä»OnCreateEntityå‡½æ•°ä¸­è·å–m_Bufferçš„å€¼ï¼Œå¹¶åˆ©ç”¨SetFieldValueInternalè®¾ç½®è¿›æœ€ç»ˆC#è„šæœ¬ä¸­
+			bool sceneRunning = scene->IsRunning();
+			if (sceneRunning)//å¦‚æœSceneåœ¨è¿è¡Œè¿‡ç¨‹ä¸­,è®¾ç½®å˜é‡ç›´æ¥scriptInstanceä¸­å˜é‡è¿›è¡Œå¤„ç†ã€Monoçš„APIã€‘
 			{
-				const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-
-				for (const auto& [name, field] : fields)
+				Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+				if (scriptInstance)
 				{
-					if (field.Type == ScriptFieldType::Float)
+					const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+
+					for (const auto& [name, field] : fields)
 					{
-						float data = scriptInstance->GetFieldValue<float>(name);
-						if (ImGui::DragFloat(name.c_str(), &data))
+						if (field.Type == ScriptFieldType::Float)
 						{
-							scriptInstance->SetFieldValue(name, data);
+							float data = scriptInstance->GetFieldValue<float>(name);
+							if (ImGui::DragFloat(name.c_str(), &data))
+							{
+								scriptInstance->SetFieldValue(name, data);
+							}
+						}
+					}
+				}
+			}
+			else//å¦‚æœSceneåœ¨Editorä¸­,
+			{
+				if (scriptClassExists)
+				{
+					Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(component.ClassName);
+					const auto& fields = entityClass->GetFields();
+
+					auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+					for (const auto& [name, field] : fields)
+					{
+						// Field has been set in editor
+						if (entityFields.find(name) != entityFields.end())
+						{
+							ScriptFieldInstance& scriptField = entityFields.at(name);
+
+							// Display control to set it maybe
+							if (field.Type == ScriptFieldType::Float)
+							{
+								float data = scriptField.GetValue<float>();
+								if (ImGui::DragFloat(name.c_str(), &data))
+									scriptField.SetValue(data);
+							}
+						}
+						else
+						{
+							// Display control to set it maybe
+							if (field.Type == ScriptFieldType::Float)
+							{
+								float data = 0.0f;
+								if (ImGui::DragFloat(name.c_str(), &data))
+								{
+									ScriptFieldInstance& fieldInstance = entityFields[name];//entityFields[name]ä½¿ç”¨æ—¶ä¼šç»™mapæ·»åŠ ä¸€ä¸ªå…ƒç´ 
+									fieldInstance.Field = field;
+									fieldInstance.SetValue(data);
+								}
+							}
 						}
 					}
 				}
