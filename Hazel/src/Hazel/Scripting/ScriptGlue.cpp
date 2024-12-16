@@ -127,7 +127,7 @@ namespace Hazel {
 		([]()
 			{
 				std::string_view typeName = typeid(Component).name();//获取类名称
-				size_t pos = typeName.find_last_of(":");
+				size_t pos = typeName.find_last_of(':');
 				std::string_view structName = typeName.substr(pos + 1);
 				std::string managedTypename = fmt::format("Hazel.{}", structName);
 
@@ -153,6 +153,7 @@ namespace Hazel {
 	/// </summary>
 	void ScriptGlue::RegisterComponents()
 	{
+		s_EntityHasComponentFuncs.clear();
 		RegisterComponent(AllComponents{});
 	}
 
