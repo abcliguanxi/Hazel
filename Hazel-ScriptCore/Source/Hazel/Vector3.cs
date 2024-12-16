@@ -23,6 +23,12 @@
 			Z = z;
 		}
 
+		public Vector3(Vector2 xy, float z)
+		{
+			X = xy.X;
+			Y = xy.Y;
+			Z = z;
+		}
 
 		public Vector2 XY
 		{
@@ -38,7 +44,6 @@
 		{
 			return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
-
 
 		public static Vector3 operator *(Vector3 vector, float scalar)
 		{

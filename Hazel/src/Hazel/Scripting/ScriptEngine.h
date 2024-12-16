@@ -96,7 +96,7 @@ namespace Hazel {
 	};
 
 	/// <summary>
-	/// 每个挂载ScriptComponent的entity都有一个ScriptInstance
+	/// 每个挂载ScriptComponent的entity都有一个ScriptInstance,ScriptInstance属于MonoObject
 	/// </summary>
 	/// <param name="ts"></param>
 	class ScriptInstance
@@ -128,6 +128,8 @@ namespace Hazel {
 
 			SetFieldValueInternal(name, &value);
 		}
+
+		MonoObject* GetManagedObject() { return m_Instance; }
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);
@@ -169,6 +171,8 @@ namespace Hazel {
 		static ScriptFieldMap& GetScriptFieldMap(Entity entity);
 		
 		static MonoImage* GetCoreAssemblyImage();
+
+		static MonoObject* GetManagedInstance(UUID uuid);
 	private:
 		static void InitMono();
 		static void ShutdownMono();
